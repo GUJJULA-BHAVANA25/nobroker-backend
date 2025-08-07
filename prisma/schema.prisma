@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(uuid())
+  name       String
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now())
+  properties Property[]
+}
+
+model Property {
+  id           String         @id @default(uuid())
+  title        String
+  description  String
+  address      String
+  city         String
+  state        String
+  pincode      String
+  price        Float
+  propertyType PropertyType
+  userId       String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  area         Float?
+  areaUnit     String?
+  bedrooms     Int?
+  forType      String
+  phone        String
+  listedBy     User           @relation(fields: [userId], references: [id])
+  files        PropertyFile[]
+}
+
+model PropertyFile {
+  id         String   @id @default(uuid())
+  url        String
+  propertyId String
+  createdAt  DateTime @default(now())
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  sender    String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  VILLA
+  PLOT
+}
+
+enum Role {
+  ADMIN
+  USER
+}
